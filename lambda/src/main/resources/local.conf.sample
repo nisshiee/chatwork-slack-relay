@@ -1,0 +1,4 @@
+chatwork = {
+  token = "xxxxxxxxxx"
+  targetRoomId = 000000
+}
