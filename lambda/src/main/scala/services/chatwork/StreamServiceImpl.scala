@@ -7,6 +7,7 @@ import org.nisshiee.chatwork_lambda_test.infra.chatwork._
 
 object StreamServiceImpl extends StreamService
 with MixinMessageRepository
+with MixinLastLoadedRepository
 with MixinCurrentTimeRepository
 
 trait MixinStreamService extends UsesStreamService {
