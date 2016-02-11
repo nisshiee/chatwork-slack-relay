@@ -19,7 +19,9 @@ object PostRepositoryImpl extends PostRepository {
       author_icon: Option[String] = None,
       text: Option[String] = None)
     case class Post(
-      attachments: List[Attachment])
+      username: Option[String] = None,
+      icon_url: Option[String] = None,
+      attachments: List[Attachment] = Nil)
   }
 
   override def send(post: Post)(implicit ec: ExecutionContext) = {
@@ -34,8 +36,10 @@ object PostRepositoryImpl extends PostRepository {
   implicit lazy val formats = DefaultFormats
 
   private def post2json(post: Post): String = {
-    val jsonObj = json.Post(List(
-      json.Attachment(
+    val jsonObj = json.Post(
+      Some(post.username),
+      Some(post.iconUrl),
+      List(json.Attachment(
         Some(post.author),
         Some(post.authorIcon),
         Some(post.body))))

@@ -12,11 +12,10 @@ import org.nisshiee.chatwork_lambda_test.domain.chatwork._
 
 class Main extends MixinRelayService {
   lazy val config = ConfigFactory.load
-  lazy val targetRoom = Room(
-    Id[Room](config.as[Long]("chatwork.targetRoomId")))
+  lazy val targetRoomId = Id[Room](config.as[Long]("chatwork.targetRoomId"))
 
   def main(input: String, context: Context): String = {
-    val future = relayService.run(targetRoom).
+    val future = relayService.run(targetRoomId).
       map { _ => "done" }.
       recover {
         case t => t.toString
