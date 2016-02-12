@@ -1,8 +1,9 @@
 package org.nisshiee.chatwork_lambda_test.domain.chatwork
 
+import monocle.macros.Lenses
 import com.github.nscala_time.time.Imports._
 
-case class LastLoaded(
+@Lenses case class LastLoaded(
   sendTime: DateTime,
   updateTime: DateTime)
 
