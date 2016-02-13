@@ -8,15 +8,20 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
 import com.amazonaws.services.dynamodbv2.document._
 import com.github.nscala_time.time.Imports._
+import com.typesafe.config.ConfigFactory
+import net.ceedubs.ficus.Ficus._
 import org.nisshiee.chatwork_lambda_test.domain.chatwork._
 
 object LastLoadedRepositoryImpl extends LastLoadedRepository {
+  lazy val config = ConfigFactory.load
+  lazy val region = Regions.fromName(config.as[String]("dynamodb.lastLoaded.region"))
+  lazy val tableName = config.as[String]("dynamodb.lastLoaded.table")
   lazy val table = {
     val client: AmazonDynamoDBClient = new AmazonDynamoDBClient(
       new EnvironmentVariableCredentialsProvider()
-    ).withRegion(Regions.AP_NORTHEAST_1)
+    ).withRegion(region)
     val dynamoDB = new DynamoDB(client)
-    dynamoDB.getTable("chatwork-lambda-test")
+    dynamoDB.getTable(tableName)
   }
 
   lazy val roomIdKey = "roomId"

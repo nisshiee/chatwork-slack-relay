@@ -6,3 +6,10 @@ chatwork = {
 slack = {
   hookUrl = "https://hooks.slack.com/services/xxx/xxx/xxxx"
 }
+
+dynamodb = {
+  lastLoaded = {
+    table = xxxxxxx
+    region = ap-northeast-1
+  }
+}
