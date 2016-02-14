@@ -15,6 +15,9 @@ extends WordSpec
 with concurrent.ScalaFutures
 with OneInstancePerTest
 with MockFactory {
+  override implicit def patienceConfig =
+    super.patienceConfig.copy(timeout = Span(1, Second))
+
   val roomId     = Id[Room](1)
   val room       = Room(roomId, "room name", "icon path")
   val account    = Account(
@@ -40,9 +43,19 @@ with MockFactory {
     val postRepository = stub[PostRepository]
     val roomRepository = stub[RoomRepository]
   }
+  (service.postRepository.send(_: Post)(_: ExecutionContext)).
+    when(*, *).
+    returns(Future.successful(unit))
 
-  override implicit def patienceConfig =
-    super.patienceConfig.copy(timeout = Span(1, Second))
+  def stubRoomRepository(id: Id[Room] = roomId)(roomOpt: Option[Room] = None): Unit =
+    (service.roomRepository.get(_: Id[Room])(_: ExecutionContext)).
+      when(id, *).
+      returns(Future.successful(roomOpt))
+
+  def stubStreamService(room: Room = room)(messages: List[Message] = Nil): Unit =
+    (service.streamService.messageStream(_: Room)(_: ExecutionContext)).
+      when(room, *).
+      returns(Future.successful(messages))
 
   "#toSlackPost" should {
     "converts from chatwork message to slack post" in {
@@ -52,12 +65,8 @@ with MockFactory {
 
   def doNothingSituation(roomOpt: Option[Room], messages: List[Message]): Unit = {
     "does nothing" in {
-      (service.roomRepository.get(_: Id[Room])(_: ExecutionContext)).
-        when(roomId, *).
-        returns(Future.successful(roomOpt))
-      (service.streamService.messageStream(_: Room)(_: ExecutionContext)).
-        when(room, *).
-        returns(Future.successful(messages))
+      stubRoomRepository()(roomOpt)
+      stubStreamService()(messages)
 
       assert(service.run(roomId).futureValue === unit)
 
@@ -78,20 +87,43 @@ with MockFactory {
 
     "streamService returns a message" should {
       "calls PostRepository#send" in {
-        (service.roomRepository.get(_: Id[Room])(_: ExecutionContext)).
-          when(roomId, *).
-          returns(Future.successful(Some(room)))
-        (service.streamService.messageStream(_: Room)(_: ExecutionContext)).
-          when(room, *).
-          returns(Future.successful(message :: Nil))
-        (service.postRepository.send(_: Post)(_: ExecutionContext)).
-          when(*, *).
-          returns(Future.successful(unit))
+        stubRoomRepository()(Some(room))
+        stubStreamService()(message :: Nil)
 
         assert(service.run(roomId).futureValue === unit)
 
         (service.postRepository.send(_: Post)(_: ExecutionContext)).
-          verify(expectedPost, *)
+          verify(expectedPost, *).
+          once
+      }
+    }
+
+    "called with plural roomIds" should {
+      "calls related services, repositories for each room" in {
+        val otherRoomId = Id.value.modify(_ + 1)(roomId)
+        val otherRoom = (
+          Room.id.set(otherRoomId) andThen
+          Room.name.set("other room"))(room)
+        stubRoomRepository()(Some(room))
+        stubRoomRepository(otherRoomId)(Some(otherRoom))
+
+        val otherMessage = (
+          (Message.id ^|-> Id.value).modify(_ + 1) andThen
+          Message.body.set("other message"))(message)
+        stubStreamService()(message :: Nil)
+        stubStreamService(otherRoom)(otherMessage :: Nil)
+
+        assert(service.run(roomId :: otherRoomId :: Nil).futureValue === unit)
+
+        val otherExpectedPost = (
+          Post.username.set("other room") andThen
+          Post.body.set("other message"))(expectedPost)
+        (service.postRepository.send(_: Post)(_: ExecutionContext)).
+          verify(expectedPost, *).
+          once
+        (service.postRepository.send(_: Post)(_: ExecutionContext)).
+          verify(otherExpectedPost, *).
+          once
       }
     }
   }

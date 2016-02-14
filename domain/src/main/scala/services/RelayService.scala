@@ -12,8 +12,12 @@ trait RelayService
 extends UsesStreamService
 with UsesPostRepository
 with UsesRoomRepository {
+  def run(roomIds: List[Id[Room]])(implicit ec: ExecutionContext): Future[Unit] =
+    roomIds.map(run(_)).foldLeft(Future.successful(())) { (a, e) =>
+      a.flatMap { l => e }
+    }
 
-  def run(roomId: Id[Room])(implicit ex: ExecutionContext): Future[Unit] = (for {
+  def run(roomId: Id[Room])(implicit ec: ExecutionContext): Future[Unit] = (for {
     room <- OptionT.optionT(roomRepository.get(roomId))
     messages <- streamService.messageStream(room).liftM[OptionT]
     posts = messages.map { message => toSlackPost(room, message) }
