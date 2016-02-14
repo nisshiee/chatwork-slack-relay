@@ -22,22 +22,4 @@ class Main extends MixinRelayService {
       }
     Await.result(future, Duration.Inf)
   }
-
-  def saveToDynamoDB(input: String): Unit = {
-    import com.amazonaws.auth.EnvironmentVariableCredentialsProvider
-    import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
-    import com.amazonaws.services.dynamodbv2.document.{ DynamoDB, Item }
-    import com.amazonaws.regions.Regions
-
-    val client: AmazonDynamoDBClient = new AmazonDynamoDBClient(
-      new EnvironmentVariableCredentialsProvider()
-    ).withRegion(Regions.AP_NORTHEAST_1)
-    val dynamoDB = new DynamoDB(client)
-    val table = dynamoDB.getTable("chatwork-lambda-test")
-
-    val item = new Item().
-      withPrimaryKey("roomId", System.currentTimeMillis).
-      withString("input", input)
-    table.putItem(item)
-  }
 }

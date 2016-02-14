@@ -1,8 +1,0 @@
-chatwork = {
-  token = "xxxxxxxxxx"
-  targetRoomId = 000000
-}
-
-slack = {
-  hookUrl = "https://hooks.slack.com/services/xxx/xxx/xxxx"
-}

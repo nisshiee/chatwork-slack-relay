@@ -1,8 +1,8 @@
 name := "chatwork-lambda-test-domain"
 
 libraryDependencies ++= Seq(
-  "com.github.nscala-time" %% "nscala-time"                 % "2.8.0",
-  "org.scalaz"             %% "scalaz-core"                 % "7.2.0",
+  "com.github.nscala-time" %% "nscala-time" % "2.8.0",
+  "org.scalaz"             %% "scalaz-core" % "7.2.0",
 
   "com.github.julien-truffaut"  %%  "monocle-core"    % "1.2.0",
   "com.github.julien-truffaut"  %%  "monocle-generic" % "1.2.0",
@@ -15,3 +15,5 @@ libraryDependencies ++= Seq(
 )
 
 addCompilerPlugin("org.scalamacros" %% "paradise" % "2.1.0" cross CrossVersion.full)
+
+scalacOptions += "-language:higherKinds"
