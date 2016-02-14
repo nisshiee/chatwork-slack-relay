@@ -8,6 +8,7 @@ import org.nisshiee.chatwork_slack_relay.domain.chatwork._
 import org.nisshiee.chatwork_slack_relay.domain.slack._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest._
+import org.scalatest.time._
 
 class RelayServiceSpec
 extends WordSpec
@@ -39,6 +40,9 @@ with MockFactory {
     val postRepository = stub[PostRepository]
     val roomRepository = stub[RoomRepository]
   }
+
+  override implicit def patienceConfig =
+    super.patienceConfig.copy(timeout = Span(1, Second))
 
   "#toSlackPost" should {
     "converts from chatwork message to slack post" in {
