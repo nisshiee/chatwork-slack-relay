@@ -1,0 +1,18 @@
+# c.f.
+# http://www.scala-sbt.org/0.13/docs/Travis-CI-with-sbt.html
+sudo: false
+
+language: scala
+jdk:
+  - oraclejdk8
+
+cache:
+  directories:
+    - $HOME/.ivy2/cache
+    - $HOME/.sbt/boot/
+before_cache:
+  - find $HOME/.sbt -name "*.lock" | xargs rm
+  - find $HOME/.ivy2 -name "ivydata-*.properties" | xargs rm
+
+script:
+  - sbt testAll

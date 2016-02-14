@@ -1,6 +1,8 @@
 chatwork-slack-relay
 ================================================================================
 
+[![Build Status](https://travis-ci.org/nisshiee/chatwork-slack-relay.svg?branch=master)](https://travis-ci.org/nisshiee/chatwork-slack-relay)
+
 概要
 ------------------------------------------------------------
 
