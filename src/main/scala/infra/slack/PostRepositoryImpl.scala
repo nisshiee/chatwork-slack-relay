@@ -18,7 +18,9 @@ object PostRepositoryImpl extends PostRepository {
       author_name: Option[String] = None,
       author_link: Option[String] = None,
       author_icon: Option[String] = None,
-      text: Option[String] = None)
+      text: Option[String] = None,
+      mrkdwn_in: Option[List[String]] = Some("text" :: Nil),
+      color: Option[String] = Some("#f82726"))
     case class Post(
       username: Option[String] = None,
       icon_url: Option[String] = None,
@@ -38,13 +40,13 @@ object PostRepositoryImpl extends PostRepository {
 
   private def post2json(post: Post): String = {
     val jsonObj = json.Post(
-      Some(post.username),
-      Some(post.iconUrl),
-      List(json.Attachment(
-        Some(post.author),
-        Some(post.authorLink),
-        Some(post.authorIcon),
-        Some(post.body))))
+      username    = Some(post.username),
+      icon_url    = Some(post.iconUrl),
+      attachments = List(json.Attachment(
+        author_name = Some(post.author),
+        author_link = Some(post.authorLink),
+        author_icon = Some(post.authorIcon),
+        text        = Some(post.body))))
 
     Serialization.write(jsonObj)
   }
