@@ -6,5 +6,6 @@ import monocle.macros.Lenses
   username: String,
   iconUrl: String,
   author: String,
+  authorLink: String,
   authorIcon: String,
   body: String)

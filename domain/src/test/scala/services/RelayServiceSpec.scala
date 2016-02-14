@@ -34,6 +34,7 @@ with MockFactory {
     username   = "room name",
     iconUrl    = "icon path",
     author     = "name",
+    authorLink = "https://www.chatwork.com/#!rid1-1",
     authorIcon = "http://avater.img/url",
     body       = "body")
   val unit = ()
@@ -100,7 +101,7 @@ with MockFactory {
 
     "called with plural roomIds" should {
       "calls related services, repositories for each room" in {
-        val otherRoomId = Id.value.modify(_ + 1)(roomId)
+        val otherRoomId = Id.value.set(2)(roomId)
         val otherRoom = (
           Room.id.set(otherRoomId) andThen
           Room.name.set("other room"))(room)
@@ -108,7 +109,7 @@ with MockFactory {
         stubRoomRepository(otherRoomId)(Some(otherRoom))
 
         val otherMessage = (
-          (Message.id ^|-> Id.value).modify(_ + 1) andThen
+          (Message.id ^|-> Id.value).set(2) andThen
           Message.body.set("other message"))(message)
         stubStreamService()(message :: Nil)
         stubStreamService(otherRoom)(otherMessage :: Nil)
@@ -117,6 +118,7 @@ with MockFactory {
 
         val otherExpectedPost = (
           Post.username.set("other room") andThen
+          Post.authorLink.set("https://www.chatwork.com/#!rid2-2") andThen
           Post.body.set("other message"))(expectedPost)
         (service.postRepository.send(_: Post)(_: ExecutionContext)).
           verify(expectedPost, *).
