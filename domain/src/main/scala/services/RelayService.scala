@@ -28,6 +28,7 @@ with UsesRoomRepository {
     room.name,
     room.iconPath,
     message.account.name,
+    s"https://www.chatwork.com/#!rid${room.id}-${message.id}",
     message.account.avatarImageUrl,
     message.body)
 
