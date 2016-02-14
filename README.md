@@ -16,5 +16,5 @@ Comming soon...
 License
 ------------------------------------------------------------
 
-Copyright (c) 2016 Hirokazu Nishioka
+Copyright (c) 2016 Hirokazu Nishioka  
 Released under the MIT license
