@@ -1,4 +1,4 @@
-name := "chatwork-lambda-test-domain"
+name := "chatwork-slack-relay-domain"
 
 libraryDependencies ++= Seq(
   "com.github.nscala-time" %% "nscala-time" % "2.8.0",

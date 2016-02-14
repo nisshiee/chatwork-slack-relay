@@ -1,7 +1,7 @@
-package org.nisshiee.chatwork_lambda_test.infra
+package org.nisshiee.chatwork_slack_relay.infra
 
 import com.github.nscala_time.time.Imports._
-import org.nisshiee.chatwork_lambda_test.domain._
+import org.nisshiee.chatwork_slack_relay.domain._
 
 object CurrentTimeRepositoryImpl extends CurrentTimeRepository {
   override lazy val get = DateTime.now

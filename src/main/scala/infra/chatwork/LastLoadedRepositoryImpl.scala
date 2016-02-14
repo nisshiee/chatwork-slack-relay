@@ -1,4 +1,4 @@
-package org.nisshiee.chatwork_lambda_test.infra.chatwork
+package org.nisshiee.chatwork_slack_relay.infra.chatwork
 
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Try
@@ -10,7 +10,7 @@ import com.amazonaws.services.dynamodbv2.document._
 import com.github.nscala_time.time.Imports._
 import com.typesafe.config.ConfigFactory
 import net.ceedubs.ficus.Ficus._
-import org.nisshiee.chatwork_lambda_test.domain.chatwork._
+import org.nisshiee.chatwork_slack_relay.domain.chatwork._
 
 object LastLoadedRepositoryImpl extends LastLoadedRepository {
   lazy val config = ConfigFactory.load

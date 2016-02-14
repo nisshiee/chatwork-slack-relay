@@ -1,11 +1,11 @@
-package org.nisshiee.chatwork_lambda_test.infra.slack
+package org.nisshiee.chatwork_slack_relay.infra.slack
 
 import scala.concurrent.{ ExecutionContext, Future }
 
 import dispatch._, Defaults._
 import org.json4s._
 import org.json4s.jackson.Serialization
-import org.nisshiee.chatwork_lambda_test.domain.slack._
+import org.nisshiee.chatwork_slack_relay.domain.slack._
 import com.typesafe.config.ConfigFactory
 import net.ceedubs.ficus.Ficus._
 

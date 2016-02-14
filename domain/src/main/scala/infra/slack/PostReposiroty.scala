@@ -1,4 +1,4 @@
-package org.nisshiee.chatwork_lambda_test.domain.slack
+package org.nisshiee.chatwork_slack_relay.domain.slack
 
 import scala.concurrent.{ ExecutionContext, Future }
 

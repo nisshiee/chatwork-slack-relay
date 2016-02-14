@@ -1,9 +1,9 @@
-package org.nisshiee.chatwork_lambda_test.domain.chatwork
+package org.nisshiee.chatwork_slack_relay.domain.chatwork
 
 import scala.concurrent.{ ExecutionContext, Future }
 
 import com.github.nscala_time.time.Imports._
-import org.nisshiee.chatwork_lambda_test.domain._
+import org.nisshiee.chatwork_slack_relay.domain._
 
 trait StreamService
 extends UsesMessageRepository

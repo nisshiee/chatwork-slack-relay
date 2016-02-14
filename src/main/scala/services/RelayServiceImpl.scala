@@ -1,9 +1,9 @@
-package org.nisshiee.chatwork_lambda_test
+package org.nisshiee.chatwork_slack_relay
 
-import org.nisshiee.chatwork_lambda_test.chatwork._
-import org.nisshiee.chatwork_lambda_test.domain._
-import org.nisshiee.chatwork_lambda_test.infra.chatwork._
-import org.nisshiee.chatwork_lambda_test.infra.slack._
+import org.nisshiee.chatwork_slack_relay.chatwork._
+import org.nisshiee.chatwork_slack_relay.domain._
+import org.nisshiee.chatwork_slack_relay.infra.chatwork._
+import org.nisshiee.chatwork_slack_relay.infra.slack._
 
 object RelayServiceImpl extends RelayService
 with MixinStreamService

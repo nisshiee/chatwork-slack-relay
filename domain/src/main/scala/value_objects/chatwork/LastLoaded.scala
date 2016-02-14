@@ -1,4 +1,4 @@
-package org.nisshiee.chatwork_lambda_test.domain.chatwork
+package org.nisshiee.chatwork_slack_relay.domain.chatwork
 
 import monocle.macros.Lenses
 import com.github.nscala_time.time.Imports._
