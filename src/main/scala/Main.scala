@@ -12,10 +12,12 @@ import org.nisshiee.chatwork_slack_relay.domain.chatwork._
 
 class Main extends MixinRelayService {
   lazy val config = ConfigFactory.load
-  lazy val targetRoomId = Id[Room](config.as[Long]("chatwork.targetRoomId"))
+  lazy val targetRoomIds: List[Id[Room]] =
+    config.as[List[Long]]("chatwork.targetRoomIds").
+    map(Id.apply[Room])
 
   def main(input: String, context: Context): String = {
-    val future = relayService.run(targetRoomId).
+    val future = relayService.run(targetRoomIds).
       map { _ => "done" }.
       recover {
         case t => t.toString

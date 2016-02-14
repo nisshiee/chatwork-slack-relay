@@ -1,6 +1,9 @@
 chatwork = {
   token = "xxxxxxxxxx"
-  targetRoomId = 000000
+  targetRoomIds = [
+    000000
+    000000
+  ]
 }
 
 slack = {
