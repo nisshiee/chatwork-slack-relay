@@ -6,6 +6,7 @@ lazy val commonSettings = Seq(
 
 lazy val root = (project in file(".")).
   settings(commonSettings: _*).
+  enablePlugins(LocalConfigPlugin, AwsPlugin, DistributionPlugin).
   dependsOn(domain)
 
 lazy val domain = (project in file("domain")).
@@ -67,35 +68,12 @@ options in Proguard +=
      |  *;
      |}""".stripMargin
 
-val cleanAll = taskKey[Unit]("clean before build for production")
 cleanAll := {
   (clean in domain).value
   clean.value
 }
 
-val dist = taskKey[File]("compile, test, assemble and deploy")
-dist := {
-  (proguard in Proguard).value match {
-    case f :: Nil => {
-      val command = s"aws lambda update-function-code --function-name chatwork-lambda-test --zip-file fileb://$f"
-      command.!
-      f
-    }
-  }
-}
-dist <<= dist.dependsOn(test in Test)
-dist <<= dist.dependsOn(test in domain in Test)
-dist <<= dist.dependsOn(cleanAll)
-
-val invoke = taskKey[Unit]("invoke function on aws")
-invoke := {
-  val command = Seq(
-    "aws", "lambda", "invoke",
-    "--function-name", "chatwork-lambda-test",
-    "--payload",  "\"invoke from sbt\"",
-    "--invocation-type", "RequestResponse",
-    "./target/invoke-result")
-  command.!
-  "cat ./target/invoke-result".!
-  "echo".!
+testAll := {
+  (test in domain in Test).value
+  (test in Test).value
 }
