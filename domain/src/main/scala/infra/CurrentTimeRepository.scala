@@ -1,4 +1,4 @@
-package org.nisshiee.chatwork_lambda_test.domain
+package org.nisshiee.chatwork_slack_relay.domain
 
 import com.github.nscala_time.time.Imports._
 

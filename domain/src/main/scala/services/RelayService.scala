@@ -1,9 +1,9 @@
-package org.nisshiee.chatwork_lambda_test.domain
+package org.nisshiee.chatwork_slack_relay.domain
 
 import scala.concurrent.{ ExecutionContext, Future }
 
-import org.nisshiee.chatwork_lambda_test.domain.chatwork._
-import org.nisshiee.chatwork_lambda_test.domain.slack._
+import org.nisshiee.chatwork_slack_relay.domain.chatwork._
+import org.nisshiee.chatwork_slack_relay.domain.slack._
 import scalaz.OptionT
 import scalaz.std.scalaFuture._
 import scalaz.syntax.monad._

@@ -1,4 +1,4 @@
-package org.nisshiee.chatwork_lambda_test.infra.chatwork
+package org.nisshiee.chatwork_slack_relay.infra.chatwork
 
 import scala.concurrent.ExecutionContext
 
@@ -6,9 +6,9 @@ import com.typesafe.config.ConfigFactory
 import net.ceedubs.ficus.Ficus._
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
-import org.nisshiee.chatwork_lambda_test.domain._
-import org.nisshiee.chatwork_lambda_test.domain.chatwork._
-import org.nisshiee.chatwork_lambda_test.infra.chatwork.serializers._
+import org.nisshiee.chatwork_slack_relay.domain._
+import org.nisshiee.chatwork_slack_relay.domain.chatwork._
+import org.nisshiee.chatwork_slack_relay.infra.chatwork.serializers._
 
 object MessageRepositoryImpl extends MessageRepository {
   lazy val config = ConfigFactory.load

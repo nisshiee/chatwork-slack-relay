@@ -12,7 +12,7 @@ lazy val root = (project in file(".")).
 lazy val domain = (project in file("domain")).
   settings(commonSettings: _*)
 
-name := "chatwork-lambda-test"
+name := "chatwork-slack-relay"
 
 resolvers += Resolver.jcenterRepo
 val exclusionUnnecessaryAws = Seq(
@@ -34,10 +34,10 @@ libraryDependencies ++= Seq(
   "org.json4s"              %% "json4s-jackson" % "3.3.0")
 
 initialCommands := """
-import org.nisshiee.chatwork_lambda_test._
-import org.nisshiee.chatwork_lambda_test.domain._
-import org.nisshiee.chatwork_lambda_test.domain.chatwork._
-import org.nisshiee.chatwork_lambda_test.infra.chatwork._
+import org.nisshiee.chatwork_slack_relay._
+import org.nisshiee.chatwork_slack_relay.domain._
+import org.nisshiee.chatwork_slack_relay.domain.chatwork._
+import org.nisshiee.chatwork_slack_relay.infra.chatwork._
 """
 cleanupCommands := """
 dispatch.Http.shutdown
@@ -56,7 +56,7 @@ options in Proguard += "-dontoptimize"
 options in Proguard += "-dontobfuscate"
 
 val keepClasses = Seq(
-    "org.nisshiee.chatwork_lambda_test.**",
+    "org.nisshiee.chatwork_slack_relay.**",
     "com.fasterxml.**",
     "org.apache.commons.logging.impl.**",
     "com.amazonaws.**",

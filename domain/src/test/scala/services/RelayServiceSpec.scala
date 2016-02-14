@@ -1,11 +1,11 @@
-package org.nisshiee.chatwork_lambda_test.domain
+package org.nisshiee.chatwork_slack_relay.domain
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ ExecutionContext, Future }
 
 import com.github.nscala_time.time.Imports._
-import org.nisshiee.chatwork_lambda_test.domain.chatwork._
-import org.nisshiee.chatwork_lambda_test.domain.slack._
+import org.nisshiee.chatwork_slack_relay.domain.chatwork._
+import org.nisshiee.chatwork_slack_relay.domain.slack._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest._
 
