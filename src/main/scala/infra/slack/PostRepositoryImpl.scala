@@ -16,6 +16,7 @@ object PostRepositoryImpl extends PostRepository {
   object json {
     case class Attachment(
       author_name: Option[String] = None,
+      author_link: Option[String] = None,
       author_icon: Option[String] = None,
       text: Option[String] = None)
     case class Post(
@@ -41,6 +42,7 @@ object PostRepositoryImpl extends PostRepository {
       Some(post.iconUrl),
       List(json.Attachment(
         Some(post.author),
+        Some(post.authorLink),
         Some(post.authorIcon),
         Some(post.body))))
 
