@@ -10,6 +10,7 @@ import scalaz.syntax.monad._
 
 trait RelayService
 extends UsesStreamService
+with UsesTransferService
 with UsesPostRepository
 with UsesRoomRepository {
   def run(roomIds: List[Id[Room]])(implicit ec: ExecutionContext): Future[Unit] =
@@ -20,17 +21,9 @@ with UsesRoomRepository {
   def run(roomId: Id[Room])(implicit ec: ExecutionContext): Future[Unit] = (for {
     room <- OptionT.optionT(roomRepository.get(roomId))
     messages <- streamService.messageStream(room).liftM[OptionT]
-    posts = messages.map { message => toSlackPost(room, message) }
+    posts = messages.map { message => transferService.ctos(room, message) }
     _ <- sendSequencially(posts).liftM[OptionT]
   } yield ()).run.map(_ => ())
-
-  def toSlackPost(room: Room, message: Message) = Post(
-    room.name,
-    room.iconPath,
-    message.account.name,
-    s"https://www.chatwork.com/#!rid${room.id}-${message.id}",
-    message.account.avatarImageUrl,
-    message.body)
 
   def sendSequencially(posts: List[Post])(implicit ec: ExecutionContext): Future[Unit] =
     posts.foldLeft(Future.successful(())) { (f, post) =>

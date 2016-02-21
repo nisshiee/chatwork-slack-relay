@@ -7,6 +7,7 @@ import org.nisshiee.chatwork_slack_relay.infra.slack._
 
 object RelayServiceImpl extends RelayService
 with MixinStreamService
+with MixinTransferService
 with MixinPostRepository
 with MixinRoomRepository
 
