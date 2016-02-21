@@ -6,6 +6,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 import com.github.nscala_time.time.Imports._
 import org.nisshiee.chatwork_slack_relay.domain.chatwork._
 import org.nisshiee.chatwork_slack_relay.domain.slack._
+import org.nisshiee.chatwork_slack_relay.test._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest._
 import org.scalatest.time._
@@ -14,33 +15,14 @@ class RelayServiceSpec
 extends WordSpec
 with concurrent.ScalaFutures
 with OneInstancePerTest
-with MockFactory {
+with MockFactory
+with Dummies {
   override implicit def patienceConfig =
     super.patienceConfig.copy(timeout = Span(1, Second))
 
-  val roomId     = Id[Room](1)
-  val room       = Room(roomId, "room name", "icon path")
-  val account    = Account(
-    Id[Account](1L),
-    "name",
-    "http://avater.img/url")
-  val message    = Message(
-    Id[Message](1L),
-    account,
-    "body",
-    new DateTime(2016, 2, 10, 12, 33, 44),
-    new DateTime(0L))
-  val expectedPost = Post(
-    username   = "room name",
-    iconUrl    = "icon path",
-    author     = "name",
-    authorLink = "https://www.chatwork.com/#!rid1-1",
-    authorIcon = "http://avater.img/url",
-    body       = "body")
-  val unit = ()
-
   val service = new RelayService {
     val streamService  = stub[StreamService]
+    val transferService = new TransferService {}
     val postRepository = stub[PostRepository]
     val roomRepository = stub[RoomRepository]
   }
@@ -57,12 +39,6 @@ with MockFactory {
     (service.streamService.messageStream(_: Room)(_: ExecutionContext)).
       when(room, *).
       returns(Future.successful(messages))
-
-  "#toSlackPost" should {
-    "converts from chatwork message to slack post" in {
-      assert(service.toSlackPost(room, message) === expectedPost)
-    }
-  }
 
   def doNothingSituation(roomOpt: Option[Room], messages: List[Message]): Unit = {
     "does nothing" in {
@@ -94,7 +70,7 @@ with MockFactory {
         assert(service.run(roomId).futureValue === unit)
 
         (service.postRepository.send(_: Post)(_: ExecutionContext)).
-          verify(expectedPost, *).
+          verify(post, *).
           once
       }
     }
@@ -119,9 +95,9 @@ with MockFactory {
         val otherExpectedPost = (
           Post.username.set("other room") andThen
           Post.authorLink.set("https://www.chatwork.com/#!rid2-2") andThen
-          Post.body.set("other message"))(expectedPost)
+          Post.body.set("other message"))(post)
         (service.postRepository.send(_: Post)(_: ExecutionContext)).
-          verify(expectedPost, *).
+          verify(post, *).
           once
         (service.postRepository.send(_: Post)(_: ExecutionContext)).
           verify(otherExpectedPost, *).
