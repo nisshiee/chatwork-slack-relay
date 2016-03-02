@@ -5,7 +5,5 @@ import monocle.macros.Lenses
 @Lenses case class Post(
   username: String,
   iconUrl: String,
-  author: String,
-  authorLink: String,
-  authorIcon: String,
+  author: Option[Author],
   body: String)

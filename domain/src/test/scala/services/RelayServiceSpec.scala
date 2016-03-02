@@ -4,6 +4,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ ExecutionContext, Future }
 
 import com.github.nscala_time.time.Imports._
+import monocle.std.option.some
 import org.nisshiee.chatwork_slack_relay.domain.chatwork._
 import org.nisshiee.chatwork_slack_relay.domain.slack._
 import org.nisshiee.chatwork_slack_relay.test._
@@ -94,7 +95,7 @@ with Dummies {
 
         val otherExpectedPost = (
           Post.username.set("other room") andThen
-          Post.authorLink.set("https://www.chatwork.com/#!rid2-2") andThen
+          (Post.author ^<-? some ^|-> Author.link).set("https://www.chatwork.com/#!rid2-2") andThen
           Post.body.set("other message"))(post)
         (service.postRepository.send(_: Post)(_: ExecutionContext)).
           verify(post, *).
