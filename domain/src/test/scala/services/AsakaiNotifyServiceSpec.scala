@@ -12,7 +12,7 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest._
 import org.scalatest.time._
 
-class RelayServiceSpec
+class AsakaiNotifyServiceSpec
 extends WordSpec
 with concurrent.ScalaFutures
 with OneInstancePerTest
@@ -21,9 +21,8 @@ with Dummies {
   override implicit def patienceConfig =
     super.patienceConfig.copy(timeout = Span(1, Second))
 
-  val service = new RelayService {
+  val service = new AsakaiNotifyService {
     val streamService  = stub[StreamService]
-    val transferService = new TransferService {}
     val postRepository = stub[PostRepository]
     val roomRepository = stub[RoomRepository]
   }
@@ -41,12 +40,12 @@ with Dummies {
       when(room, *).
       returns(Future.successful(messages))
 
-  def doNothingSituation(roomOpt: Option[Room], messages: List[Message]): Unit = {
+  def doNothingSituation(roomOpt: Option[Room], messages: List[Message], targetUserName: String = "hoge"): Unit = {
     "does nothing" in {
       stubRoomRepository()(roomOpt)
       stubStreamService()(messages)
 
-      assert(service.run(roomId).futureValue === unit)
+      assert(service.run(roomId, targetUserName).futureValue === unit)
 
       (service.postRepository.sendSequencially(_: List[Post])(_: ExecutionContext)).
         when(*, *).
@@ -63,46 +62,29 @@ with Dummies {
       behave like doNothingSituation(Some(room), Nil)
     }
 
-    "streamService returns a message" should {
-      "calls PostRepository#send" in {
-        stubRoomRepository()(Some(room))
-        stubStreamService()(message :: Nil)
-
-        assert(service.run(roomId).futureValue === unit)
-
-        (service.postRepository.sendSequencially(_: List[Post])(_: ExecutionContext)).
-          verify(post :: Nil, *).
-          once
-      }
+    "streamService returns messages that is NOT for asakai team" should {
+      behave like doNothingSituation(Some(room), message :: Nil)
     }
 
-    "called with plural roomIds" should {
-      "calls related services, repositories for each room" in {
-        val otherRoomId = Id.value.set(2)(roomId)
-        val otherRoom = (
-          Room.id.set(otherRoomId) andThen
-          Room.name.set("other room"))(room)
-        stubRoomRepository()(Some(room))
-        stubRoomRepository(otherRoomId)(Some(otherRoom))
+    "streamService returns asakai team message" when {
+      "target user name can't be found in the message" should {
+        behave like doNothingSituation(
+          Some(room),
+          asakaiTeamMessage("hoge") :: Nil,
+          targetUserName = "fuga")
+      }
 
-        val otherMessage = (
-          (Message.id ^|-> Id.value).set(2) andThen
-          Message.body.set("other message"))(message)
-        stubStreamService()(message :: Nil)
-        stubStreamService(otherRoom)(otherMessage :: Nil)
+      "target user name is found in the message" should {
+        "calls PostRepository#sendSequencially" in {
+          stubRoomRepository()(Some(room))
+          stubStreamService()(asakaiTeamMessage("hoge") :: Nil)
 
-        assert(service.run(roomId :: otherRoomId :: Nil).futureValue === unit)
+          assert(service.run(roomId, "hoge").futureValue === unit)
 
-        val otherExpectedPost = (
-          Post.username.set("other room") andThen
-          (Post.author ^<-? some ^|-> Author.link).set("https://www.chatwork.com/#!rid2-2") andThen
-          Post.body.set("other message"))(post)
-        (service.postRepository.sendSequencially(_: List[Post])(_: ExecutionContext)).
-          verify(post :: Nil, *).
-          once
-        (service.postRepository.sendSequencially(_: List[Post])(_: ExecutionContext)).
-          verify(otherExpectedPost :: Nil, *).
-          once
+          (service.postRepository.sendSequencially(_: List[Post])(_: ExecutionContext)).
+            verify(asakaiNotifyPost("hoge") :: Nil, *).
+            once
+        }
       }
     }
   }

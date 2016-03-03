@@ -43,9 +43,9 @@ object PostRepositoryImpl extends PostRepository {
       username    = Some(post.username),
       icon_url    = Some(post.iconUrl),
       attachments = List(json.Attachment(
-        author_name = Some(post.author),
-        author_link = Some(post.authorLink),
-        author_icon = Some(post.authorIcon),
+        author_name = post.author.map(_.name),
+        author_link = post.author.map(_.link),
+        author_icon = post.author.map(_.icon),
         text        = Some(post.body))))
 
     Serialization.write(jsonObj)

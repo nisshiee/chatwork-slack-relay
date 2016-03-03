@@ -22,13 +22,8 @@ with UsesRoomRepository {
     room <- OptionT.optionT(roomRepository.get(roomId))
     messages <- streamService.messageStream(room).liftM[OptionT]
     posts = messages.map { message => transferService.ctos(room, message) }
-    _ <- sendSequencially(posts).liftM[OptionT]
+    _ <- postRepository.sendSequencially(posts).liftM[OptionT]
   } yield ()).run.map(_ => ())
-
-  def sendSequencially(posts: List[Post])(implicit ec: ExecutionContext): Future[Unit] =
-    posts.foldLeft(Future.successful(())) { (f, post) =>
-      postRepository.send(post)
-    }
 }
 
 trait UsesRelayService {
