@@ -4,6 +4,10 @@ chatwork = {
     000000
     000000
   ]
+  asakai = {
+    roomId = 000000
+    targetUser = "名前"
+  }
 }
 
 slack = {

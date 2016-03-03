@@ -9,4 +9,8 @@ extends Authors {
     iconUrl    = "icon path",
     author     = Some(author),
     body       = "body")
+
+  def asakaiNotifyPost(userName: String): Post =
+    (Post.body.set(s"＜1＞ $userName") andThen
+      Post.author.set(None))(post)
 }
